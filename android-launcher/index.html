@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Brasilia Craft Launcher</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0f131b;color:#fff;font-family:Arial,sans-serif}header{padding:28px 22px;background:#171d28;border-bottom:1px solid #273142}h1{margin:0;font-size:28px}p{color:#aeb8c8}.bar{display:flex;gap:10px;padding:16px 22px;position:sticky;top:0;background:#0f131b}input,button{border:0;border-radius:10px;padding:13px;font-size:15px}input{flex:1;background:#202735;color:#fff}button{background:#3d7cff;color:#fff;font-weight:bold;cursor:pointer}.versions{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;padding:22px}.card{background:#181f2b;border:1px solid #293345;border-radius:14px;padding:16px}.card b{font-size:18px}.type{color:#91a0b5;font-size:13px;margin:7px 0 12px}.card button{width:100%}#status{padding:0 22px;color:#9fb0c8}.empty{text-align:center;padding:30px;color:#8895a8}
+</style>
+</head>
+<body>
+<header><h1>⛏️ Brasilia Craft</h1><p>Launcher Minecraft Java Edition</p></header>
+<div class="bar"><input id="search" placeholder="Pesquisar versão..." oninput="filterVersions()"><button onclick="loadVersions()">Atualizar</button></div>
+<div id="status">Carregando versões oficiais...</div>
+<div id="versions" class="versions"></div>
+<script>
+let all=[];
+const manifest='https://piston-meta.mojang.com/mc/game/version_manifest_v2.json';
+async function loadVersions(){
+ const s=document.getElementById('status'); s.textContent='Carregando versões oficiais...';
+ try{const r=await fetch(manifest); if(!r.ok)throw new Error('Falha ao acessar o manifesto'); const d=await r.json(); all=d.versions||[]; render(all); s.textContent=all.length+' versões encontradas';}
+ catch(e){s.textContent='Erro ao carregar: '+e.message; document.getElementById('versions').innerHTML='<div class="empty">Verifique sua internet e tente novamente.</div>';}
+}
+function render(items){document.getElementById('versions').innerHTML=items.map(v=>`<div class="card"><b>${escapeHtml(v.id)}</b><div class="type">${escapeHtml(v.type)}</div><button onclick="selectVersion('${escapeJs(v.id)}')">Selecionar</button></div>`).join('')||'<div class="empty">Nenhuma versão encontrada.</div>'}
+function filterVersions(){const q=document.getElementById('search').value.toLowerCase();render(all.filter(v=>v.id.toLowerCase().includes(q)||v.type.toLowerCase().includes(q)));}
+function selectVersion(v){document.getElementById('status').textContent='Selecionado: '+v+' — execução do Minecraft será adicionada com autenticação oficial.';}
+function escapeHtml(x){return x.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function escapeJs(x){return x.replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
+loadVersions();
+</script>
+</body>
+</html>
