@@ -1,0 +1,1 @@
+{"name":"celestiar-launcher","version":"0.1.0","private":true,"description":"Minecraft Java launcher","main":"src/main.js","scripts":{"start":"electron .","build":"electron-builder"},"devDependencies":{"electron":"^38.0.0","electron-builder":"^26.0.0"},"dependencies":{}}
